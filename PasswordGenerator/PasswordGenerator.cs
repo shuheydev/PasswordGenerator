@@ -15,25 +15,47 @@ namespace PasswordGen
         private static readonly string numeric = "0123456789";
         private static readonly string nonAlphaNumeric = @"@;:#$%&{}[]~^";
 
-        private IPasswordGeneratorBuilder builder;
+        public readonly int RequiredLength;
 
-        public PasswordGenerator()
-        {
+        public readonly int RequiredUniqueChars;
 
-        }
-        public PasswordGenerator(IPasswordGeneratorBuilder passwordGeneratorBuilder)
+        public readonly bool RequireNonAlphanumeric;
+
+        public readonly bool RequireLowercase;
+
+        public readonly bool RequireUppercase;
+
+        public readonly bool RequireDigit;
+
+        /// <summary>
+        /// passwordgeneratorのインスタンス化はpasswordgeneratorbuilderからのみ.
+        /// </summary>
+        /// <param name="requiredLength"></param>
+        /// <param name="requiredUniqueChars"></param>
+        /// <param name="requireNonAlphanumeric"></param>
+        /// <param name="requireLowercase"></param>
+        /// <param name="requireUppercase"></param>
+        /// <param name="requireDigit"></param>
+        internal PasswordGenerator(int requiredLength, int requiredUniqueChars, bool requireNonAlphanumeric, bool requireLowercase, bool requireUppercase, bool requireDigit)
         {
-            this.builder = passwordGeneratorBuilder;
+            this.RequiredLength = requiredLength;
+            this.RequiredUniqueChars = requiredUniqueChars;
+            this.RequireNonAlphanumeric = requireNonAlphanumeric;
+            this.RequireLowercase = requireLowercase;
+            this.RequireUppercase = requireUppercase;
+            this.RequireDigit = requireDigit;
         }
 
         public string Generate()
         {
+            if (this.RequiredLength == 0)
+                return string.Empty;
+
             //パスワードに使用する文字種を取得
             List<string> candidates = GetCharCandidates();
 
-
             //パスワードを構成する文字列の空きスロット数
-            var slot = builder.RequiredLength;
+            var slot = this.RequiredLength;
             //使用する文字の種類の数
             var divNum = candidates.Count;
 
@@ -53,19 +75,19 @@ namespace PasswordGen
         {
             List<string> candidates = new List<string>();
 
-            if (builder.RequireDigit)
+            if (this.RequireDigit)
             {
                 candidates.Add(numeric);
             }
-            if (builder.RequireLowercase)
+            if (this.RequireLowercase)
             {
                 candidates.Add(lowerCase);
             }
-            if (builder.RequireUppercase)
+            if (this.RequireUppercase)
             {
                 candidates.Add(upperCase);
             }
-            if (builder.RequireNonAlphanumeric)
+            if (this.RequireNonAlphanumeric)
             {
                 candidates.Add(nonAlphaNumeric);
             }

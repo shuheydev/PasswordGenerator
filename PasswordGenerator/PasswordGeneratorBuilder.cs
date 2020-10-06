@@ -4,24 +4,9 @@ using System.Text;
 
 namespace PasswordGen
 {
- public class PasswordGeneratorBuilder : IPasswordGeneratorBuilder
+    public class PasswordGeneratorBuilder : IPasswordGeneratorBuilder
     {
-        private int _requiredLength = 6;
-        public int RequiredLength
-        {
-            get => _requiredLength;
-            private set
-            {
-                if (value < 1)
-                {
-                    _requiredLength = 6;
-                }
-                else
-                {
-                    _requiredLength = value;
-                }
-            }
-        }
+        public int RequiredLength { get; private set; } = 6;
 
         public int RequiredUniqueChars { get; private set; } = 1;
 
@@ -72,7 +57,12 @@ namespace PasswordGen
 
         public IPasswordGenerator Build()
         {
-            return new PasswordGenerator(this);
+            return new PasswordGenerator(this.RequiredLength,
+                                         this.RequiredUniqueChars,
+                                         this.RequireNonAlphanumeric,
+                                         this.RequireLowercase,
+                                         this.RequireUppercase,
+                                         this.RequireDigit);
         }
     }
 }
